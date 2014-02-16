@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf8"?>
 <xtcommerceplugin>
   <title>Barzahlen</title>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <code>zi_barzahlen</code>
   <url>http://www.barzahlen.de</url>
   <description>Barzahlen Zahlungsmodul</description>
@@ -15,7 +15,7 @@
     <payment_tpl>checkout.html</payment_tpl>
     <de>
       <title>Barzahlen</title>
-      <description><![CDATA[Mit Abschluss der Bestellung erhalten Sie einen Zahlschein, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen k&ouml;nnen. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins in einem Barzahlen-Partnergesch&auml;ft in Ihrer N&auml;he.]]></description>
+      <description><![CDATA[Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen k&ouml;nnen. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen-Partnerfiliale.]]></description>
     </de>
     <en>
       <title>Barzahlen</title>
@@ -452,20 +452,10 @@
     <key>TEXT_BARZAHLEN_FRONTEND_PARTNER</key>
     <class>store</class>
     <de>
-      <value><![CDATA[<strong>Eine Auswahl unserer Partner:</strong>]]></value>
+      <value><![CDATA[<strong>Bezahlen Sie bei:</strong>]]></value>
     </de>
     <en>
-      <value><![CDATA[<strong>A selection of our partners:</strong>]]></value>
-    </en>
-    </phrase>
-    <phrase>
-    <key>TEXT_BARZAHLEN_FRONTEND_SUCCESS_TITLE</key>
-    <class>store</class>
-    <de>
-      <value>Einfach und sicher online bezahlen</value>
-    </de>
-    <en>
-      <value>Simple and secure online payment</value>
+      <value><![CDATA[<strong>Pay at:</strong>]]></value>
     </en>
     </phrase>
   </language_content>

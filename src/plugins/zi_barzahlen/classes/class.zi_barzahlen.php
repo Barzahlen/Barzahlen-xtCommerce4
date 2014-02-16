@@ -29,7 +29,7 @@ class zi_barzahlen {
   // payment settings
   public $data = array(); //!< data for payment method
   public $external = false; //!< no external call within the shop
-  public $version = '1.1.0'; //!< version of the payment module
+  public $version = '1.1.1'; //!< version of the payment module
   public $subpayments = false; //!< no subpayments (e.g. credit card) required
   public $iframe = false; //!< no iframe required
   private $_xmlArray; //!< xml response array
@@ -134,10 +134,7 @@ class zi_barzahlen {
                   SET orders_status = '".$status."'
                   WHERE orders_id = '".$order_id."'");
 
-    $_SESSION['payment-slip-link']  = $this->_xmlArray['payment-slip-link'];
     $_SESSION['infotext-1']  = $this->_xmlArray['infotext-1'];
-    $_SESSION['infotext-2']  = $this->_xmlArray['infotext-2'];
-    $_SESSION['expiration-notice']  = $this->_xmlArray['expiration-notice'];
   }
 
   // Barzahlen table which contains the transactions with their ID as primary key

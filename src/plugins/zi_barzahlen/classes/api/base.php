@@ -36,7 +36,7 @@ abstract class Barzahlen_Base {
    * @param string $message debug message
    * @param array $data related data (optional)
    */
-  final protected function _debug($message, array $data = array()) {
+  protected function _debug($message, array $data = array()) {
 
     require_once _SRV_WEBROOT.'plugins/zi_barzahlen/classes/class.log.php';
     barzahlen_log::debug($message, $data);
@@ -49,7 +49,7 @@ abstract class Barzahlen_Base {
    * @param string $key private key depending on hash type
    * @return hash sum
    */
-  final protected function _createHash(array $hashArray, $key) {
+  protected function _createHash(array $hashArray, $key) {
 
     $hashArray[] = $key;
     $hashString = implode(self::SEPARATOR, $hashArray);
@@ -61,7 +61,7 @@ abstract class Barzahlen_Base {
    *
    * @param array $array array with (empty) values
    */
-  final protected function _removeEmptyValues(array &$array) {
+  protected function _removeEmptyValues(array &$array) {
 
     foreach($array as $key => $value) {
       if($value == '') {

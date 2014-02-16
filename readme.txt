@@ -6,4 +6,7 @@ Barzahlen Payment Module (xt:Commerce 4)
 http://www.barzahlen.de
 
 ==Current Version==
-1.1.0
+1.1.1
+
+==User Manual==
+http://www.barzahlen.de/partner/integration/shopsysteme/7/xt-commerce-4

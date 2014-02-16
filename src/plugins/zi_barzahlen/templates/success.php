@@ -21,7 +21,7 @@
  * @license     http://opensource.org/licenses/GPL-3.0  GNU General Public License, version 3 (GPL-3.0)
  */
 
-global $xtLink, $db;
+global $xtLink;
 $orderId = $_SESSION['success_order_id'];
 $customerId = $_SESSION['customer']->customers_id;
 $lastOrder = new order($orderId, $customerId);
@@ -29,38 +29,9 @@ $paymentCode = $lastOrder->order_data['payment_code'];
 
 if($paymentCode === 'zi_barzahlen') {
 
-  $result = $db->Execute("SELECT language_value FROM ".TABLE_LANGUAGE_CONTENT."
-                          WHERE language_key = 'TEXT_BARZAHLEN_FRONTEND_SUCCESS_TITLE'
-                          AND language_code = '".$lastOrder->order_data['language_code']."'");
-
-  if(isset($_SESSION['payment-slip-link'])){
-
-    echo '<iframe src="'.$_SESSION['payment-slip-link'].'" width="0" height="1" frameborder="0"></iframe>
-          <img src="http://cdn.barzahlen.de/images/barzahlen_logo.png" height="57" width="168" alt="" style="padding:0; margin:0; margin-bottom: 10px;"/>
-          <hr/>
-          <br/>
-          <div style="width:100%;">
-            <div style="position: relative; float: left; width: 180px; text-align: center;">
-              <a href="'.$_SESSION['payment-slip-link'].'" target="_blank" style="color: #63A924; text-decoration: none; font-size: 1.2em;">
-                <img src="http://cdn.barzahlen.de/images/barzahlen_checkout_success_payment_slip.png" height="192" width="126" alt="" style="margin-bottom: 5px;"/><br/>
-                <strong>Download PDF</strong>
-              </a>
-            </div>
-            <span style="font-weight: bold; color: #63A924; font-size: 1.5em;">'.$result->fields['language_value'].'</span>
-            <p>'.$_SESSION['infotext-1'].'</p>
-            <p>'.$_SESSION['expiration-notice'].'</p>
-            <div style="width:100%;">
-              <div style="position: relative; float: left; width: 50px;"><img src="http://cdn.barzahlen.de/images/barzahlen_mobile.png" height="52" width="41" alt="" style="float: left;"/></div>
-              <p>'.$_SESSION['infotext-2'].'</p>
-            </div>
-            <br style="clear:both;" /><br/>
-          </div>
-          <hr/>';
-
-    unset($_SESSION['payment-slip-link']);
+  if(isset($_SESSION['infotext-1'])){
+    echo $_SESSION['infotext-1'];
     unset($_SESSION['infotext-1']);
-    unset($_SESSION['infotext-2']);
-    unset($_SESSION['expiration-notice']);
   }
 
   else {
