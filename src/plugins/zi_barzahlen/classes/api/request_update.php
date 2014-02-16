@@ -21,27 +21,24 @@
  * @license     http://opensource.org/licenses/GPL-3.0  GNU General Public License, version 3 (GPL-3.0)
  */
 
-class Barzahlen_Request_Refund extends Barzahlen_Request_Base {
+class Barzahlen_Request_Update extends Barzahlen_Request_Base {
 
-  protected $_type = 'refund'; //!< request type
+  protected $_type = 'update'; //!< request type
   protected $_transactionId; //!< origin transaction id
-  protected $_amount; //!< refund amount
-  protected $_currency; //!< currency of refund (ISO 4217)
+  protected $_orderId; //!< order id
 
-  protected $_xmlAttributes = array('origin-transaction-id', 'refund-transaction-id', 'result', 'hash'); //!< refund xml content
+  protected $_xmlAttributes = array('transaction-id', 'result', 'hash'); //!< update xml content
 
   /**
    * Construtor to set variable request settings.
    *
    * @param string $transactionId origin transaction id
-   * @param string $amount refund amount
-   * @param string $currency currency of refund (ISO 4217)
+   * @param string $orderId order id
    */
-  public function __construct($transactionId, $amount, $currency = 'EUR') {
+  public function __construct($transactionId, $orderId) {
 
     $this->_transactionId = $transactionId;
-    $this->_amount = $amount;
-    $this->_currency = $currency;
+    $this->_orderId = $orderId;
   }
 
   /**
@@ -51,16 +48,14 @@ class Barzahlen_Request_Refund extends Barzahlen_Request_Base {
    * @param string $paymentKey merchants payment key
    * @param string $language langauge code (ISO 639-1)
    * @param array $customVar custom variables from merchant
-   * @return array for refund request
+   * @return array for update request
    */
   public function buildRequestArray($shopId, $paymentKey, $language) {
 
     $requestArray = array();
     $requestArray['shop_id'] = $shopId;
     $requestArray['transaction_id'] = $this->_transactionId;
-    $requestArray['amount'] = $this->_amount;
-    $requestArray['currency'] = $this->_currency;
-    $requestArray['language'] = $language;
+    $requestArray['order_id'] = $this->_orderId;
     $requestArray['hash'] = $this->_createHash($requestArray, $paymentKey);
 
     $this->_removeEmptyValues($requestArray);
@@ -68,21 +63,12 @@ class Barzahlen_Request_Refund extends Barzahlen_Request_Base {
   }
 
   /**
-   * Returns origin transaction id from xml array.
+   * Returns transaction id from xml array.
    *
-   * @return received origin transaction id
+   * @return received transaction id
    */
-  public function getOriginTransactionId() {
-    return $this->getXmlArray('origin-transaction-id');
-  }
-
-  /**
-   * Returns refund transaction id from xml array.
-   *
-   * @return received refund transaction id
-   */
-  public function getRefundTransactionId() {
-    return $this->getXmlArray('refund-transaction-id');
+  public function getTransactionId() {
+    return $this->getXmlArray('transaction-id');
   }
 }
 ?>

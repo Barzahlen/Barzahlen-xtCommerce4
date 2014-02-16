@@ -92,6 +92,30 @@ class db_handler {
 // v---------- replaced xt:Commerce classes ----------v
 
 /**
+ * Fake customer class for testing purpose.
+ */
+class cart {
+
+  public $total;
+
+  public function __construct() {
+    $this->total = array('plain' => 24.95);
+  }
+}
+
+/**
+ * Fake customer class for testing purpose.
+ */
+class customer {
+
+  public $customer_info;
+
+  public function __construct() {
+    $this->customer_info = array('customers_email_address' => 'foo@bar.com');
+  }
+}
+
+/**
  * Fake order class for testing purpose.
  */
 class order {
@@ -129,6 +153,22 @@ class xtLink {
 
   function _link($array) {
     // do nothing
+  }
+
+  function _redirect($array) {
+    // do nothing
+  }
+}
+
+/**
+ * Fake language class for testing purpose.
+ */
+class language {
+
+  public $environment_language;
+
+  function __construct() {
+    $this->environment_language = 'de';
   }
 }
 
@@ -261,14 +301,13 @@ class db_result {
 
 global $order;
 $order = new order(1,1);
-$order->order_data['customers_email_address'] = 'foo@bar.com';
-$order->order_total['total']['plain'] = '24.95';
-$order->order_data['currency_code'] = 'EUR';
-$order->order_data['language_code'] = 'de';
 
 global $xtLink;
 $xtLink = new xtLink;
 
 global $db;
 $db = new db_object;
+
+global $language;
+$language = new language;
 ?>

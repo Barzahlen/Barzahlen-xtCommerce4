@@ -32,6 +32,7 @@ class barzahlen_ipn {
 
   protected $_receivedData = array(); //!< received data from the server
   protected $_barzahlen; //!< Barzahlen base model
+  protected $_orderId; //!< corresponding order
 
   /**
    * Checks received data and validates hash.
@@ -60,6 +61,16 @@ class barzahlen_ipn {
    */
   public function updateDatabase() {
 
+    if(array_key_exists('order_id', $this->_receivedData)) {
+      $this->_orderId = $this->_receivedData['order_id'];
+    }
+    elseif(array_key_exists('origin_order_id', $this->_receivedData)) {
+      $this->_orderId = $this->_receivedData['origin_order_id'];
+    }
+    else {
+      $this->_orderId = 0;
+    }
+
     if($this->_checkOrderInformation() && $this->_canChangeState()) {
       if($this->_handleStateChange()) {
         $this->_updateOrderState();
@@ -86,17 +97,31 @@ class barzahlen_ipn {
         $this->_addErrorLog('model/ipn: refund stats not correct');
         return false;
       }
+      if ($this->_orderId == 0) {
+        $result = $db->Execute("SELECT order_id FROM " . TABLE_BARZAHLEN_TRANSACTIONS . "
+                                WHERE transaction_id = '" . $this->_receivedData['origin_transaction_id'] . "'");
+
+        $this->_orderId = $result->fields['order_id'];
+      }
     }
     else {
       $result = $db->Execute("SELECT * FROM " . TABLE_BARZAHLEN_TRANSACTIONS . "
-                              WHERE order_id = '" . $this->_receivedData['order_id'] . "'
-                              AND transaction_id = '" . $this->_receivedData['transaction_id'] . "'
-                              AND amount = '" . $this->_receivedData['amount'] . "'
-                              AND currency = '" . $this->_receivedData['currency'] . "'");
+                              WHERE transaction_id = '" . $this->_receivedData['transaction_id'] . "'
+                                AND amount = '" . $this->_receivedData['amount'] . "'
+                                AND currency = '" . $this->_receivedData['currency'] . "'");
 
       if ($result->RecordCount() != 1) {
         $this->_addErrorLog('model/ipn: transaction stats not correct');
         return false;
+      }
+      if ($this->_orderId != 0) {
+        if($this->_orderId != $result->fields['order_id']) {
+          $this->_addErrorLog('model/ipn: transaction stats not correct');
+          return false;
+        }
+      }
+      else {
+        $this->_orderId = $result->fields['order_id'];
       }
     }
 
@@ -120,7 +145,7 @@ class barzahlen_ipn {
     }
     else {
       $result = $db->Execute("SELECT orders_status FROM " . TABLE_ORDERS . "
-                              WHERE orders_id = '" . $this->_receivedData['order_id'] . "'");
+                              WHERE orders_id = '" . $this->_orderId . "'");
 
       if($result->fields['orders_status'] != ZI_BARZAHLEN_PENDING) {
         $this->_addErrorLog('model/ipn: unable to change state of the order', $this->_receivedData);
@@ -235,9 +260,7 @@ class barzahlen_ipn {
     $id = $this->_getIdMessage();
     $log_id = $this->_addSuccessLog();
 
-
-    $orderId = isset($this->_receivedData['order_id']) ? $this->_receivedData['order_id'] : $this->_receivedData['origin_order_id'];
-    $order = new order($orderId,-1);
+    $order = new order($this->_orderId,-1);
     $order->_updateOrderStatus($status,'Barzahlen: '.$message.' '.$id,'false','false','IPN',$log_id);
   }
 
@@ -307,11 +330,9 @@ class barzahlen_ipn {
   protected function _getIpnComment() {
     global $db;
 
-    $orderId = isset($this->_receivedData['order_id']) ? $this->_receivedData['order_id'] : $this->_receivedData['origin_order_id'];
-
     // get shop id
     $result = $db->Execute("SELECT shop_id FROM ". TABLE_ORDERS ."
-                            WHERE orders_id = '".$orderId."'");
+                            WHERE orders_id = '".$this->_orderId."'");
 
 
     // get store language via shop id
@@ -349,14 +370,13 @@ class barzahlen_ipn {
   protected function _addErrorLog($error_msg) {
     global $db;
 
-    $orderId = isset($this->_receivedData['order_id']) ? $this->_receivedData['order_id'] : $this->_receivedData['origin_order_id'];
     $transactionId = isset($this->_receivedData['transaction_id']) ? $this->_receivedData['transaction_id'] : $this->_receivedData['origin_transaction_id'];
     $module = 'zi_barzahlen';
     $class = 'error';
     $error_data = serialize($this->_receivedData);
 
     $db->Execute("INSERT INTO ".TABLE_CALLBACK_LOG." (module, orders_id, transaction_id, class, error_msg, error_data)
-                  VALUES ('$module','$orderId','$transactionId','$class','$error_msg','$error_data')");
+                  VALUES ('$module','$this->_orderId','$transactionId','$class','$error_msg','$error_data')");
   }
 
   /**
@@ -366,14 +386,13 @@ class barzahlen_ipn {
   protected function _addSuccessLog() {
     global $db;
 
-    $orderId = isset($this->_receivedData['order_id']) ? $this->_receivedData['order_id'] : $this->_receivedData['origin_order_id'];
     $transactionId = isset($this->_receivedData['transaction_id']) ? $this->_receivedData['transaction_id'] : $this->_receivedData['origin_transaction_id'];
     $module = 'zi_barzahlen';
     $class = 'success';
     $callback_data = serialize($this->_receivedData);
 
     $db->Execute("INSERT INTO ".TABLE_CALLBACK_LOG." (module, orders_id, transaction_id, class, callback_data)
-                  VALUES ('$module','$orderId','$transactionId','$class','$callback_data')");
+                  VALUES ('$module','$this->_orderId','$transactionId','$class','$callback_data')");
 
     return $db->Insert_ID();
   }

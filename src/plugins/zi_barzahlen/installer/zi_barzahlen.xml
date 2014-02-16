@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf8"?>
 <xtcommerceplugin>
   <title>Barzahlen</title>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <code>zi_barzahlen</code>
   <url>http://www.barzahlen.de</url>
   <description>Barzahlen Zahlungsmodul</description>
@@ -15,16 +15,16 @@
     <payment_tpl>checkout.html</payment_tpl>
     <de>
       <title>Barzahlen</title>
-      <description><![CDATA[Mit Abschluss der Bestellung erhalten Sie einen Zahlschein, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen k&ouml;nnen. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins in einem Barzahlen-Partnergesch&auml;ft in Ihrer N&auml;he. Den n&auml;chsten Barzahlen-Partner finden Sie auf <a href="http://www.barzahlen.de/filialfinder" style="color: #63A924;" target="_blank">http://www.barzahlen.de/filialfinder</a>.]]></description>
+      <description><![CDATA[Mit Abschluss der Bestellung erhalten Sie einen Zahlschein, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen k&ouml;nnen. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins in einem Barzahlen-Partnergesch&auml;ft in Ihrer N&auml;he.]]></description>
     </de>
     <en>
       <title>Barzahlen</title>
-      <description><![CDATA[After completing your order you get a payment slip from Barzahlen that you can easily print out or have it sent via SMS to your mobile phone. With the help of that payment slip you can pay your online purchase at one of our retail partners (e.g. supermarket). You can find the next Barzahlen partner at <a href="http://www.barzahlen.de/filialfinder" style="color: #63A924;" target="_blank">http://www.barzahlen.de/filialfinder</a>.]]></description>
+      <description><![CDATA[After completing your order you get a payment slip from Barzahlen that you can easily print out or have it sent via SMS to your mobile phone. With the help of that payment slip you can pay your online purchase at one of our retail partners (e.g. supermarket).]]></description>
     </en>
   </payment>
 
   <db_install><![CDATA[
-    $db->Execute("INSERT INTO ".TABLE_PAYMENT_COST." (`payment_id`, `payment_geo_zone`, `payment_country_code`, `payment_type_value_from`, `payment_type_value_to`, `payment_price`,`payment_allowed`) VALUES(".$payment_id.", 31, 'DE', 0, 1000.00, 0, 1);");
+    $db->Execute("INSERT INTO ".TABLE_PAYMENT_COST." (`payment_id`, `payment_geo_zone`, `payment_country_code`, `payment_type_value_from`, `payment_type_value_to`, `payment_price`,`payment_allowed`) VALUES(".$payment_id.", 31, 'DE', 0, 999.99, 0, 1);");
     $db->Execute("INSERT INTO ".TABLE_ADMIN_NAVIGATION." (`pid` ,`text`,`icon` ,`url_i` ,`url_d` ,`sortorder` ,`parent` ,`type` ,`navtype`) VALUES (NULL , 'zi_barzahlen', 'http://cdn.barzahlen.de/images/barzahlen_icon.png', '&plugin=zi_barzahlen', 'adminHandler.php', '3', 'ordertab', 'I', 'W');");
 
     $db->Execute("
@@ -194,31 +194,11 @@
 
   <plugin_code>
   <code>
-    <hook>module_checkout.php:checkout_proccess_order_processed</hook>
+    <hook>module_checkout.php:checkout_process_data</hook>
     <phpcode>
     <![CDATA[
     if ($_SESSION['selected_payment']=='zi_barzahlen') {
-      if(!$payment_module_data->registerTransactionId()) {
-        if(!$payment_module_data->registerTransactionId()) {
-
-          $result = $db->Execute("SELECT orders_status_history_id FROM ". TABLE_ORDERS_STATUS_HISTORY ."
-                                  WHERE orders_id = '".$order->oID."'
-                                  ORDER BY orders_status_history_id DESC LIMIT 1");
-
-          $comment = 'Barzahlen: Transaktion fehlgeschlagen';
-          $status = ZI_BARZAHLEN_EXPIRED;
-          $db->Execute("UPDATE ". TABLE_ORDERS_STATUS_HISTORY ."
-                        SET comments = '".$comment."', orders_status_id = '".$status."'
-                        WHERE orders_id = '".$order->oID."'
-                        AND orders_status_history_id = '".$result->fields['orders_status_history_id']."'");
-          $db->Execute("UPDATE ". TABLE_ORDERS ."
-                        SET orders_status = '".$status."'
-                        WHERE orders_id = '".$order->oID."'");
-
-          $tmp_link  = $payment_module_data->CANCEL_URL;
-          $xtLink->_redirect($tmp_link);
-        }
-      }
+      $payment_module_data->registerTransactionId($order_data);
     }
     ]]>
     </phpcode>
@@ -227,26 +207,11 @@
   </code>
 
   <code>
-    <hook>module_checkout.php:success</hook>
+    <hook>module_checkout.php:checkout_proccess_order_processed</hook>
     <phpcode>
     <![CDATA[
-    if ($success_order->order_data['payment_code']=='zi_barzahlen' && isset($_SESSION['transaction-id'])) {
-
-      $result = $db->Execute("SELECT orders_status_history_id FROM ". TABLE_ORDERS_STATUS_HISTORY ."
-                              WHERE orders_id = '".$success_order_id."'
-                              ORDER BY orders_status_history_id DESC LIMIT 1");
-
-      $comment = 'Barzahlen: Zahlschein versendet (Transaction-ID: '.$_SESSION['transaction-id'].')';
-      $status = ZI_BARZAHLEN_PENDING;
-      $db->Execute("UPDATE ". TABLE_ORDERS_STATUS_HISTORY ."
-                    SET comments = '".$comment."', orders_status_id = '".$status."'
-                    WHERE orders_id = '".$success_order_id."'
-                    AND orders_status_history_id = '".$result->fields['orders_status_history_id']."'");
-      $db->Execute("UPDATE ". TABLE_ORDERS ."
-                    SET orders_status = '".$status."'
-                    WHERE orders_id = '".$success_order_id."'");
-
-      unset($_SESSION['transaction-id']);
+    if ($_SESSION['selected_payment']=='zi_barzahlen') {
+      $payment_module_data->updateOrderId();
     }
     ]]>
     </phpcode>
@@ -500,7 +465,7 @@
       <value>Einfach und sicher online bezahlen</value>
     </de>
     <en>
-      <value>Simple and secure online payment with cash</value>
+      <value>Simple and secure online payment</value>
     </en>
     </phrase>
   </language_content>

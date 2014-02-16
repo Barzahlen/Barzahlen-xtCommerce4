@@ -362,7 +362,7 @@ function wrongIdApiCallRefund() {
 
 function failureApiCallRefund() {
 
-  $payment = new Barzahlen_Request_Payment('foo@bar.com', '42', '24.95');
+  $payment = new Barzahlen_Request_Payment('foo@bar.com', 'Musterstr. 1a', '12345', 'Musterstadt', 'DE', '24.95');
   return $payment;
 }
 

@@ -32,6 +32,17 @@ class ClassZiBarzahlenTest extends PHPUnit_Framework_TestCase {
     $this->db = new db_handler;
     $this->object = new zi_barzahlen;
     $this->object->url_data = array('edit_id' => '', 'get_data' => '');
+
+    $_SESSION['customer'] = new customer;
+    $_SESSION['cart'] = new cart;
+
+    $this->order_data = array(
+      'billing' => array('customers_street_address' => 'Musterstr. 1a',
+                         'customers_postcode' => '12345',
+                         'customers_city' => 'Musterstadt',
+                         'customers_country_code' => 'DE'),
+      'currency_code' => 'EUR'
+    );
   }
 
   /**
@@ -44,7 +55,7 @@ class ClassZiBarzahlenTest extends PHPUnit_Framework_TestCase {
                  ->method('_connectBarzahlen')
                  ->will($this->returnCallback('successApiCall'));
 
-    $this->assertTrue($this->object->registerTransactionId());
+    $this->object->registerTransactionId($this->order_data);
   }
 
   /**
@@ -59,7 +70,7 @@ class ClassZiBarzahlenTest extends PHPUnit_Framework_TestCase {
                  ->method('_connectBarzahlen')
                  ->will($this->returnCallback('failureApiCall'));
 
-    $this->assertFalse($this->object->registerTransactionId());
+    $this->object->registerTransactionId($this->order_data);
   }
 
   /**
@@ -192,7 +203,7 @@ class ClassZiBarzahlenTest extends PHPUnit_Framework_TestCase {
 
 function successApiCall() {
 
-  $payment = new Barzahlen_Request_Payment('foo@bar.com', '42', '24.95');
+  $payment = new Barzahlen_Request_Payment('foo@bar.com', 'Musterstr. 1a', '12345', 'Musterstadt', 'DE', '24.95');
   $response = '<?xml version="1.0" encoding="UTF-8"?>
                 <response>
                   <transaction-id>16966517</transaction-id>
@@ -210,7 +221,7 @@ function successApiCall() {
 
 function failureApiCall() {
 
-  $payment = new Barzahlen_Request_Payment('foo@bar.com', '42', '24.95');
+  $payment = new Barzahlen_Request_Payment('foo@bar.com', 'Musterstr. 1a', '12345', 'Musterstadt', 'DE', '24.95');
   return $payment;
 }
 

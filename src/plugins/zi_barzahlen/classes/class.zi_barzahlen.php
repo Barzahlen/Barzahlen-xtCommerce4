@@ -29,18 +29,41 @@ class zi_barzahlen {
   // payment settings
   public $data = array(); //!< data for payment method
   public $external = false; //!< no external call within the shop
-  public $version = '1.0.0'; //!< version of the payment module
+  public $version = '1.1.0'; //!< version of the payment module
   public $subpayments = false; //!< no subpayments (e.g. credit card) required
   public $iframe = false; //!< no iframe required
-
-  protected $_xmlData = array('transaction-id', 'payment-slip-link', 'expiration-notice', 'infotext-1', 'infotext-2'); //!< all necessary attributes for a valid
+  private $_xmlArray; //!< xml response array
 
   /**
-   * Constructor which sets the error message when the payment method fail to get a transaction id.
+   * Attempts to get and save transaction id.
+   *
+   * @return boolean
    */
-  public function __construct() {
-    global $xtLink;
-    $this->CANCEL_URL  = $xtLink->_link(array('page'=>'checkout', 'paction'=>'payment','params'=>'error=ERROR_PAYMENT'));
+  public function registerTransactionId(array $order_data) {
+    global $xtLink, $language;
+
+    $customerEmail = $_SESSION['customer']->customer_info['customers_email_address'];
+    $customerStreetNr = $order_data['billing']['customers_street_address'];
+    $customerZipcode = $order_data['billing']['customers_postcode'];
+    $customerCity = $order_data['billing']['customers_city'];
+    $customerCountry = $order_data['billing']['customers_country_code'];
+    $amount = round($_SESSION['cart']->total['plain'],2);
+    $currency = $order_data['currency_code'];
+    $request = new Barzahlen_Request_Payment($customerEmail, $customerStreetNr, $customerZipcode, $customerCity, $customerCountry, $amount, $currency);
+
+    $sandbox = ZI_BARZAHLEN_SANDBOX == 'true' ? true : false;
+    $api = new Barzahlen_Api(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID, $sandbox);
+    $api->setLanguage($language->environment_language);
+
+    $payment = $this->_connectBarzahlen($api, $request);
+
+    if($payment->isValid()) {
+      $this->_xmlArray = $payment->getXmlArray();
+    }
+    else {
+      $cancelUrl  = $xtLink->_link(array('page'=>'checkout', 'paction'=>'payment','params'=>'error=ERROR_PAYMENT'));
+      $xtLink->_redirect($cancelUrl);
+    }
   }
 
   /**
@@ -48,26 +71,18 @@ class zi_barzahlen {
    *
    * @return boolean
    */
-  public function registerTransactionId() {
+  public function updateOrderId() {
     global $order;
 
-    $customerEmail = $order->order_data['customers_email_address'];
+    $this->_saveTransaction();
+
+    $transactionId = $this->_xmlArray['transaction-id'];
     $orderId = $order->oID;
-    $amount = round($order->order_total['total']['plain'],2);
-    $currency = $order->order_data['currency_code'];
-    $request = new Barzahlen_Request_Payment($customerEmail, $orderId, $amount, $currency);
+    $request = new Barzahlen_Request_Update($transactionId, $orderId);
 
     $sandbox = ZI_BARZAHLEN_SANDBOX == 'true' ? true : false;
     $api = new Barzahlen_Api(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID, $sandbox);
-    $api->setLanguage($order->order_data['language_code']);
-
-    $payment = $this->_connectBarzahlen($api, $request);
-
-    if($payment->isValid()) {
-      $this->_saveTransactionId($payment->getXmlArray());
-    }
-
-    return $payment->isValid();
+    $this->_connectBarzahlen($api, $request);
   }
 
   /**
@@ -90,13 +105,12 @@ class zi_barzahlen {
 
   /**
    * Saves transaction id to database and sets session variables for success page.
-   *
-   * @param array $response xml response in an array
+   * Furthermore the history comment for the successful payment request is set.
    */
-  protected function _saveTransactionId(array $response) {
+  protected function _saveTransaction() {
     global $db, $order;
 
-    $transaction_id = $response['transaction-id'];
+    $transaction_id = $this->_xmlArray['transaction-id'];
     $order_id = $order->oID;
     $amount = round($order->order_total['total']['plain'],2);
     $currency = $order->order_data['currency_code'];
@@ -106,11 +120,24 @@ class zi_barzahlen {
                   VALUES
                   ('".$transaction_id."','".$order_id."','".$amount."','".$currency."','TEXT_BARZAHLEN_PENDING')");
 
-    $_SESSION['transaction-id'] = $response['transaction-id'];
-    $_SESSION['payment-slip-link']  = $response['payment-slip-link'];
-    $_SESSION['infotext-1']  = $response['infotext-1'];
-    $_SESSION['infotext-2']  = $response['infotext-2'];
-    $_SESSION['expiration-notice']  = $response['expiration-notice'];
+    $result = $db->Execute("SELECT orders_status_history_id FROM ". TABLE_ORDERS_STATUS_HISTORY ."
+                            WHERE orders_id = '".$order_id."'
+                            ORDER BY orders_status_history_id DESC LIMIT 1");
+
+    $comment = 'Barzahlen: Zahlschein versendet (Transaction-ID: '.$_SESSION['transaction-id'].')';
+    $status = ZI_BARZAHLEN_PENDING;
+    $db->Execute("UPDATE ". TABLE_ORDERS_STATUS_HISTORY ."
+                  SET comments = '".$comment."', orders_status_id = '".$status."'
+                  WHERE orders_id = '".$order_id."'
+                  AND orders_status_history_id = '".$result->fields['orders_status_history_id']."'");
+    $db->Execute("UPDATE ". TABLE_ORDERS ."
+                  SET orders_status = '".$status."'
+                  WHERE orders_id = '".$order_id."'");
+
+    $_SESSION['payment-slip-link']  = $this->_xmlArray['payment-slip-link'];
+    $_SESSION['infotext-1']  = $this->_xmlArray['infotext-1'];
+    $_SESSION['infotext-2']  = $this->_xmlArray['infotext-2'];
+    $_SESSION['expiration-notice']  = $this->_xmlArray['expiration-notice'];
   }
 
   // Barzahlen table which contains the transactions with their ID as primary key

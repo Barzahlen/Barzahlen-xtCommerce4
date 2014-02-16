@@ -22,7 +22,7 @@
  */
 
 abstract class Barzahlen_Base {
-	
+
   const APIDOMAIN = 'https://api.barzahlen.de/v1/transactions/'; //!< call domain (productive use)
   const APIDOMAINSANDBOX = 'https://api-sandbox.barzahlen.de/v1/transactions/'; //!< sandbox call domain
 
@@ -36,7 +36,7 @@ abstract class Barzahlen_Base {
    * @param string $message debug message
    * @param array $data related data (optional)
    */
-  final protected function _debug($message,array $data = array()) {
+  final protected function _debug($message, array $data = array()) {
 
     require_once _SRV_WEBROOT.'plugins/zi_barzahlen/classes/class.log.php';
     barzahlen_log::debug($message, $data);
@@ -54,6 +54,20 @@ abstract class Barzahlen_Base {
     $hashArray[] = $key;
     $hashString = implode(self::SEPARATOR, $hashArray);
     return hash(self::HASHALGO, $hashString);
+  }
+
+  /**
+   * Removes empty values from arrays.
+   *
+   * @param array $array array with (empty) values
+   */
+  final protected function _removeEmptyValues(array &$array) {
+
+    foreach($array as $key => $value) {
+      if($value == '') {
+        unset($array[$key]);
+      }
+    }
   }
 }
 ?>
