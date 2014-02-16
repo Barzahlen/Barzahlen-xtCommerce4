@@ -1,6 +1,6 @@
 <?php
 /**
- * Barzahlen Payment Module SDK (xt:Commerce 4)
+ * Barzahlen Payment Module SDK
  *
  * NOTICE OF LICENSE
  *
@@ -28,6 +28,7 @@ require_once('request_payment.php');
 require_once('request_refund.php');
 require_once('request_resend.php');
 require_once('request_update.php');
+require_once('request_cancel.php');
 require_once('exception.php');
 require_once('notification.php');
-?>
+require_once('version_check.php');

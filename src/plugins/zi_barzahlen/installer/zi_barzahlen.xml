@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf8"?>
 <xtcommerceplugin>
   <title>Barzahlen</title>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <code>zi_barzahlen</code>
   <url>http://www.barzahlen.de</url>
   <description>Barzahlen Zahlungsmodul</description>
@@ -250,6 +250,19 @@
     // Barzahlen icons for admin menu
     echo '.zi_refund {background-image: url(images/icons/money_delete.png) !important;}';
     echo '.zi_resend {background-image: url(images/icons/email_go.png) !important;}';
+    echo '.zi_cancel {background-image: url(images/icons/cancel.png) !important;}';
+    ]]>
+    </phpcode>
+    <order>1</order>
+    <active>1</active>
+  </code>
+
+  <code>
+    <hook>admin_main.php:bottom</hook>
+    <phpcode>
+    <![CDATA[
+    include _SRV_WEBROOT.'plugins/zi_barzahlen/classes/class.check.php';
+    barzahlen_check::checkVersion();
     ]]>
     </phpcode>
     <order>1</order>
@@ -286,6 +299,16 @@
     </de>
     <en>
       <value>Refunds</value>
+    </en>
+    </phrase>
+    <phrase>
+    <key>TEXT_ZI_CANCELED</key>
+    <class>admin</class>
+    <de>
+      <value>Zahlschein storniert</value>
+    </de>
+    <en>
+      <value>Payment slip canceled</value>
     </en>
     </phrase>
     <phrase>
@@ -409,6 +432,16 @@
     </en>
     </phrase>
     <phrase>
+    <key>TEXT_BARZAHLEN_CANCEL_PAYMENT</key>
+    <class>admin</class>
+    <de>
+      <value>Zahlschein stornieren</value>
+    </de>
+    <en>
+      <value>Cancel Payment Slip</value>
+    </en>
+    </phrase>
+    <phrase>
     <key>TEXT_BARZAHLEN_RESEND_REFUND</key>
     <class>admin</class>
     <de>
@@ -436,6 +469,36 @@
     </de>
     <en>
       <value>An error occurred. Please check the System-Log.</value>
+    </en>
+    </phrase>
+    <phrase>
+    <key>TEXT_BARZAHLEN_CANCEL_SUCCESS</key>
+    <class>admin</class>
+    <de>
+      <value>Transaktion wurde erfolgreich storniert.</value>
+    </de>
+    <en>
+      <value>Transaction canceled successfully.</value>
+    </en>
+    </phrase>
+    <phrase>
+    <key>TEXT_BARZAHLEN_CANCEL_FAILURE</key>
+    <class>admin</class>
+    <de>
+      <value>Es ist ein Fehler aufgetreten. Bitte prüfen Sie das System-Log.</value>
+    </de>
+    <en>
+      <value>An error occurred. Please check the System-Log.</value>
+    </en>
+    </phrase>
+    <phrase>
+    <key>TEXT_BARZAHLEN_PLUGIN_UPDATE</key>
+    <class>admin</class>
+    <de>
+      <value>Für das Barzahlen-Plugin ist eine neue Version (%s) verfügbar. Jetzt ansehen?</value>
+    </de>
+    <en>
+      <value>For the Barzahlen plugin is a new version (%s) available. View now?</value>
     </en>
     </phrase>
     <phrase>

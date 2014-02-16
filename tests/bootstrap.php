@@ -45,6 +45,7 @@ define('ZI_BARZAHLEN_NID','177d10030b4fe66af00d4b81656c6ed6ad938f77');
 define('ZI_BARZAHLEN_PENDING','11');
 define('ZI_BARZAHLEN_PAID','12');
 define('ZI_BARZAHLEN_EXPIRED','13');
+define('ZI_BARZAHLEN_CANCELED','14');
 define('ZI_BARZAHLEN_REFUND_PENDING','21');
 define('ZI_BARZAHLEN_REFUND_PARTLY','22');
 define('ZI_BARZAHLEN_REFUND_COMPLETE','23');
@@ -54,6 +55,9 @@ define('TEXT_BARZAHLEN_RESEND_PAYMENT','Erneute E-Mail');
 define('TEXT_BARZAHLEN_RESEND_REFUND', 'Erneute E-Mail');
 define('TEXT_BARZAHLEN_RESEND_SUCCESS','Erfolg E-Mail');
 define('TEXT_BARZAHLEN_RESEND_FAILURE','Fehler E-Mail');
+define('TEXT_BARZAHLEN_CANCEL_PAYMENT','Stornierung');
+define('TEXT_BARZAHLEN_CANCEL_SUCCESS','Stornierung erfolgreich');
+define('TEXT_BARZAHLEN_CANCEL_FAILURE','Stornierung fehlgeschlagen');
 
 $_SESSION['selected_language'] = 'de';
 

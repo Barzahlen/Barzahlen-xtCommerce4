@@ -27,15 +27,11 @@ $customerId = $_SESSION['customer']->customers_id;
 $lastOrder = new order($orderId, $customerId);
 $paymentCode = $lastOrder->order_data['payment_code'];
 
-if($paymentCode === 'zi_barzahlen') {
-
-  if(isset($_SESSION['infotext-1'])){
-    echo $_SESSION['infotext-1'];
-    unset($_SESSION['infotext-1']);
-  }
-
-  else {
-    $xtLink->_redirect('index.php?page=customer&page_action=order_info&oid=' . $orderId);
-  }
+if ($paymentCode === 'zi_barzahlen') {
+    if (isset($_SESSION['infotext-1'])) {
+        echo $_SESSION['infotext-1'];
+        unset($_SESSION['infotext-1']);
+    } else {
+        $xtLink->_redirect('index.php?page=customer&page_action=order_info&oid=' . $orderId);
+    }
 }
-?>

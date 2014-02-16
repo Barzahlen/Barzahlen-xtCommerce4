@@ -379,32 +379,6 @@ class ClassCallbackTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests invalid refund_completed notification against a refunded order. (Amount not correct.)
-   */
-  public function testInvalidRefundCompletedAgainstRefundOrder() {
-
-    $_GET = array('state' => 'refund_completed',
-                  'refund_transaction_id' => '4',
-                  'origin_transaction_id' => '4',
-                  'shop_id' => '2',
-                  'customer_email' => 'foo@bar.com',
-                  'amount' => '14.95',
-                  'currency' => 'EUR',
-                  'origin_order_id' => '4',
-                  'custom_var_0' => '',
-                  'custom_var_1' => '',
-                  'custom_var_2' => '',
-                  'hash' => 'ec36102edfd3d489c8aaf5f7da4dcff14d0926b24ad8573b687fd50cadaa678d02b7d4f1b7266de62ded9cd9990c0546c09342c0e74972684fa2301a56ef550a'
-                 );
-
-    $this->object->process();
-    $query = mysql_query("SELECT zi_state FROM ". TABLE_BARZAHLEN_REFUNDS ." WHERE refund_transaction_id = '4'");
-    $result = mysql_fetch_array($query, MYSQL_ASSOC);
-
-    $this->assertEquals('TEXT_BARZAHLEN_REFUND_PENDING', $result['zi_state']);
-  }
-
-  /**
    * Tests invalid paid notification against an unpaid order. (Invalid Hash.)
    */
   public function testInvalidPaidAgainstUnpaidOrder() {
