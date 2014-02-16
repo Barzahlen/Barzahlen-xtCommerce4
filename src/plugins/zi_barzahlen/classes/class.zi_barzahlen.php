@@ -29,7 +29,7 @@ class zi_barzahlen {
   // payment settings
   public $data = array(); //!< data for payment method
   public $external = false; //!< no external call within the shop
-  public $version = '1.1.1'; //!< version of the payment module
+  public $version = '1.1.2'; //!< version of the payment module
   public $subpayments = false; //!< no subpayments (e.g. credit card) required
   public $iframe = false; //!< no iframe required
   private $_xmlArray; //!< xml response array
