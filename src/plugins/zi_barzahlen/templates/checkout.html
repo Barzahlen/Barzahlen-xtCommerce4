@@ -1,0 +1,55 @@
+<!--
+/**
+ * Barzahlen Payment Module (xt:Commerce 4)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 3 of the License
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
+ *
+ * @copyright   Copyright (c) 2012 Zerebro Internet GmbH (http://www.barzahlen.de)
+ * @author      Alexander Diebler
+ * @license     http://opensource.org/licenses/GPL-3.0  GNU General Public License, version 3 (GPL-3.0)
+ */
+-->
+
+{if $smarty.const.ZI_BARZAHLEN_SANDBOX eq 'true'}
+<ul class="info_warning">
+  <li class="infoWarning">{txt key=TEXT_BARZAHLEN_FRONTEND_SANDBOX}</li>
+</ul>
+{/if}
+
+<table class="paymentblock" width="100%" border="0" cellspacing="0" cellpadding="6">
+  <tr>
+  	<td class="header" width="10">{form type=radio name=selected_payment value=$payment_code}</td>
+  	<td class="header"><strong>{$payment_name}</strong></td>
+    <td class="header" align="right">{$payment_price.formated}</td>
+  </tr>
+
+  <tr>
+    <td colspan="3">
+      <img src="http://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen" /><br /><br />
+      {$payment_desc}<br /><br />
+      {txt key=TEXT_BARZAHLEN_FRONTEND_PARTNER}<br />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_01.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_02.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_03.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_04.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_05.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_06.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_07.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_08.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_09.png" alt="" />
+      <img src="http://cdn.barzahlen.de/images/barzahlen_partner_10.png" alt="" />
+    </td>
+  </tr>
+</table>
