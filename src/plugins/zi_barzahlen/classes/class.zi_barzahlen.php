@@ -127,10 +127,9 @@ class zi_barzahlen
 
         $comment = 'Barzahlen: Zahlschein versendet (Transaction-ID: ' . $transaction_id . ')';
         $status = ZI_BARZAHLEN_PENDING;
-        $db->Execute("UPDATE " . TABLE_ORDERS_STATUS_HISTORY . "
-                  SET comments = '" . $comment . "', orders_status_id = '" . $status . "'
-                  WHERE orders_id = '" . $order_id . "'
-                  AND orders_status_history_id = '" . $result->fields['orders_status_history_id'] . "'");
+        $db->Execute("INSERT INTO " . TABLE_ORDERS_STATUS_HISTORY . "
+                      (`comments`, `orders_status_id`, `orders_id`, `callback_id`, `callback_message`)
+                      VALUES ('" . $comment . "', '" . $status . "', '" . $order_id . "', '0', '');");
         $db->Execute("UPDATE " . TABLE_ORDERS . "
                   SET orders_status = '" . $status . "'
                   WHERE orders_id = '" . $order_id . "'");
