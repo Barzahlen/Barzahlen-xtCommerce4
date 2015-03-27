@@ -189,6 +189,9 @@ class ClassZiBarzahlenTest extends PHPUnit_Framework_TestCase {
 
     require_once('src/plugins/zi_barzahlen/classes/class.log.php');
     barzahlen_log::debug('debug test');
+    $db = new db_object;
+    $result = $db->Execute('SELECT * FROM 	xt_system_log;');
+    $this->assertEquals(1, $result->RecordCount());
   }
 
   /**
