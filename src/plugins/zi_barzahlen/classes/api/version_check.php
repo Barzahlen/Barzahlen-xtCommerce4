@@ -2,52 +2,22 @@
 /**
  * Barzahlen Payment Module SDK
  *
- * NOTICE OF LICENSE
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; version 3 of the License
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see http://www.gnu.org/licenses/
- *
- * @copyright   Copyright (c) 2013 Zerebro Internet GmbH (http://www.barzahlen.de)
+ * @copyright   Copyright (c) 2014 Cash Payment Solutions GmbH (https://www.barzahlen.de)
  * @author      Alexander Diebler
- * @license     http://opensource.org/licenses/GPL-3.0  GNU General Public License, version 3 (GPL-3.0)
+ * @license     The MIT License (MIT) - http://opensource.org/licenses/MIT
  */
 
-class Barzahlen_Version_Check extends Barzahlen_Base
+class Barzahlen_Version_Check
 {
     /**
-     * Barzahlen Shop ID
-     *
      * @var string
      */
-    protected $_shopId;
+    private $pluginVersion = null;
 
     /**
-     * Barzahlen Payment Key
-     *
      * @var string
      */
-    protected $_paymentKey;
-
-    /**
-     * Constructor. Sets basic settings.
-     *
-     * @param string $shopId merchants shop id
-     * @param string $paymentKey merchants payment key
-     */
-    public function __construct($shopId, $paymentKey)
-    {
-        $this->_shopId = $shopId;
-        $this->_paymentKey = $paymentKey;
-    }
+    private $pluginUrl = null;
 
     /**
      * Kicks off the plugin check.
@@ -57,17 +27,18 @@ class Barzahlen_Version_Check extends Barzahlen_Base
      * @param string $pluginVersion current plugin version
      * @return boolean | string
      */
-    public function checkVersion($shopsystem, $shopsystemVersion, $pluginVersion)
+    public function isNewVersionAvailable($shopId, $shopsystem, $shopsystemVersion, $pluginVersion)
     {
-        $transArray['shop_id'] = $this->_shopId;
-        $transArray['shopsystem'] = $shopsystem;
-        $transArray['shopsystem_version'] = $shopsystemVersion;
-        $transArray['plugin_version'] = $pluginVersion;
-        $transArray['hash'] = $this->_createHash($transArray, $this->_paymentKey);
+        $transArray = array(
+            'shop_id' => $shopId,
+            'shopsystem' => $shopsystem,
+            'shopsystem_version' => $shopsystemVersion,
+            'plugin_version' => $pluginVersion
+        );
+        $this->requestVersion($transArray);
 
-        $latestVersion = $this->_requestVersion($transArray);
-        if ($latestVersion != false && $latestVersion != $transArray['plugin_version']) {
-            return $latestVersion;
+        if ($this->result == 0 && $this->pluginVersion != null && $pluginVersion != $this->pluginVersion) {
+            return true;
         }
 
         return false;
@@ -79,26 +50,22 @@ class Barzahlen_Version_Check extends Barzahlen_Base
      * @param array $transArray
      * @return boolean | string
      */
-    protected function _requestVersion(array $transArray)
+    protected function requestVersion(array $transArray)
     {
-        $curl = $this->_prepareRequest($transArray);
-        $xmlResponse = $this->_sendRequest($curl);
+        $curl = $this->prepareRequest($transArray);
+        $xmlResponse = $this->sendRequest($curl);
 
-        if (!is_string($xmlResponse) || $xmlResponse == '') {
-            throw new Barzahlen_Exception('PluginCheck: No valid xml response received.');
+        $domDocument = new DOMDocument();
+        $domDocument->loadXML($xmlResponse);
+
+        $this->result = $domDocument->getElementsByTagName("result")->item(0)->nodeValue;
+        if ($this->result != 0) {
+            $errorMessage = $domDocument->getElementsByTagName("error-message")->item(0)->nodeValue;
+            throw new Exception('barzahlen/versioncheck: ' . $errorMessage);
         }
 
-        try {
-            $xmlObj = new SimpleXMLElement($xmlResponse);
-        } catch (Exception $e) {
-            throw new Barzahlen_Exception('PluginCheck: ' . $e);
-        }
-
-        if ($xmlObj->{'result'} != 0) {
-            throw new Barzahlen_Exception('PluginCheck: XML response contains an error: ' . $xmlObj->{'error-message'});
-        }
-
-        return $xmlObj->{'plugin-version'};
+        $this->pluginVersion = $domDocument->getElementsByTagName("plugin-version")->item(0)->nodeValue;
+        $this->pluginUrl = $domDocument->getElementsByTagName("plugin-url")->item(0)->nodeValue;
     }
 
     /**
@@ -107,7 +74,7 @@ class Barzahlen_Version_Check extends Barzahlen_Base
      * @param array $requestArray array with the information which shall be send via POST
      * @return cURL handle object
      */
-    protected function _prepareRequest(array $requestArray)
+    protected function prepareRequest(array $requestArray)
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, 'https://plugincheck.barzahlen.de/check');
@@ -125,22 +92,41 @@ class Barzahlen_Version_Check extends Barzahlen_Base
     }
 
     /**
-     * Send the information via HTTP POST to the given domain. A xml as anwser is expected.
-     * SSL is required for a connection to Barzahlen.
+     * Sends the information via HTTP POST to the given domain expecting a response.
      *
      * @return cURL handle object
      * @return xml response from Barzahlen
      */
-    protected function _sendRequest($curl)
+    protected function sendRequest($curl)
     {
         $return = curl_exec($curl);
         $error = curl_error($curl);
         curl_close($curl);
 
         if ($error != '') {
-            throw new Barzahlen_Exception('PluginCheck: Error during cURL - ' . $error);
+            throw new Barzahlen_Exception('barzahlen/versioncheck: Error during cURL - ' . $error);
         }
 
         return $return;
+    }
+
+    /**
+     * Returns the current plugin version.
+     *
+     * @return string
+     */
+    public function getNewPluginVersion()
+    {
+        return $this->pluginVersion;
+    }
+
+    /**
+     * Returns the current plugin url.
+     *
+     * @return string
+     */
+    public function getNewPluginUrl()
+    {
+        return $this->pluginUrl;
     }
 }

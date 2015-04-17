@@ -54,6 +54,7 @@ class zi_barzahlen
 
         $sandbox = ZI_BARZAHLEN_SANDBOX == 'true' ? true : false;
         $api = new Barzahlen_Api(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID, $sandbox);
+        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.0');
         $api->setLanguage($language->environment_language);
 
         $payment = $this->_connectBarzahlen($api, $request);
@@ -83,6 +84,7 @@ class zi_barzahlen
 
         $sandbox = ZI_BARZAHLEN_SANDBOX == 'true' ? true : false;
         $api = new Barzahlen_Api(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID, $sandbox);
+        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.0');
         $this->_connectBarzahlen($api, $request);
     }
 
