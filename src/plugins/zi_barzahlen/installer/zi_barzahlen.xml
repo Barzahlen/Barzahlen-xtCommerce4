@@ -15,11 +15,11 @@
     <payment_tpl>checkout.html</payment_tpl>
     <de>
       <title>Barzahlen</title>
-      <description><![CDATA[Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen k&ouml;nnen. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen-Partnerfiliale.]]></description>
+      <description><![CDATA[Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen.de-Partnerfiliale.]]></description>
     </de>
     <en>
       <title>Barzahlen</title>
-      <description><![CDATA[After completing your order you get a payment slip from Barzahlen that you can easily print out or have it sent via SMS to your mobile phone. With the help of that payment slip you can pay your online purchase at one of our retail partners (e.g. supermarket).]]></description>
+      <description><![CDATA[After completing your order you will receive a payment slip from Barzahlen.de that you can easily print out or have it sent via text message to your mobile phone. With the help of that payment slip you can pay your online purchase at one of our retail partners.]]></description>
     </en>
   </payment>
 
@@ -499,16 +499,6 @@
     </de>
     <en>
       <value>For the Barzahlen plugin is a new version (%s) available. View now?</value>
-    </en>
-    </phrase>
-    <phrase>
-    <key>TEXT_BARZAHLEN_FRONTEND_SANDBOX</key>
-    <class>store</class>
-    <de>
-      <value><![CDATA[Der <strong>Sandbox Modus</strong> ist aktiv. Allen get&auml;tigten Zahlungen wird ein Test-Zahlschein zugewiesen. Dieser kann nicht von unseren Einzelhandelspartnern verarbeitet werden.]]></value>
-    </de>
-    <en>
-      <value><![CDATA[The <strong>Sandbox Mode</strong> is active. All placed orders receive a test payment slip. Test payment slips cannot be handled by our retail partners.]]></value>
     </en>
     </phrase>
     <phrase>
