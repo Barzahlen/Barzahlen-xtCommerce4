@@ -1,0 +1,19 @@
+<li data-role="divider" data-theme="c">
+  {$payment_name}
+</li>
+
+<li data-theme="c">
+  <div data-role="controlgroup">
+    <label>
+      {if $payment_code==$payment_selected}
+        {form type=radio name=selected_payment value=$payment_code checked=true}
+      {else}
+        {form type=radio name=selected_payment value=$payment_code}
+      {/if}
+      <span class="ui-li-heading">
+          <span class="floatRight">{$payment_price.formated}</span>
+          <span class="floatLeft"><img src="https://cdn.barzahlen.de/images/checkout_barzahlen_logo.png" alt="Barzahlen" style="height: 3em;"/></span>
+      </span>
+    </label>
+  </div>
+</li>
