@@ -22,34 +22,29 @@
  */
 -->
 
-{if $smarty.const.ZI_BARZAHLEN_SANDBOX eq 'true'}
-<ul class="info_warning">
-  <li class="infoWarning">{txt key=TEXT_BARZAHLEN_FRONTEND_SANDBOX}</li>
-</ul>
-{/if}
-
-<table class="paymentblock" width="100%" border="0" cellspacing="0" cellpadding="6">
-  <tr>
-  	<td class="header" width="10">{form type=radio name=selected_payment value=$payment_code}</td>
-  	<td class="header"><strong>{$payment_name}</strong></td>
-    <td class="header" align="right">{$payment_price.formated}</td>
-  </tr>
-
-  <tr>
-    <td colspan="3">
-      <img src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen" /><br /><br />
-      {$payment_desc}<br /><br />
+<div class="box box-white box-hover">
+  <p class="payment-name">
+    <span style="display:inline-block;width: 25px;">
+      {form type=radio name=selected_payment value=$payment_code}
+    </span>
+    <img id="barzahlen_logo" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen" style="height: 3em; vertical-align: -1em;">
+    {if $payment_price.formated}<span class="normal">({$payment_price.formated})</span>{/if}
+  </p>
+  <p id="barzahlen_description" class="payment-desc" style="padding-left:25px;">
+    <p>{$payment_desc}</p>
+    <p>
       {txt key=TEXT_BARZAHLEN_FRONTEND_PARTNER}&nbsp;
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_01.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_02.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_03.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_04.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_05.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_06.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_07.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_08.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_09.png" alt="" style="vertical-align: middle; height: 25px;" />
-      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" alt="" style="vertical-align: middle; height: 25px;" />
-    </td>
-  </tr>
-</table>
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_01.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_02.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_03.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_04.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_05.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_06.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_07.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_08.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_09.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+      <img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" alt="" style="height: 1em; vertical-align: -0.1em;" />
+    </p>
+  </p>
+  <script src="https://cdn.barzahlen.de/js/selection.js"></script>
+</div>

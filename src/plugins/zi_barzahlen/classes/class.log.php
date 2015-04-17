@@ -37,7 +37,7 @@ class barzahlen_log
 
             $debug = $debug_msg . " # " . serialize($debug_data);
 
-            $db->Execute("INSERT INTO " . TABLE_SYSTEM_LOG . " (class, module, identification, data)
+            $db->Execute("INSERT INTO " . TABLE_SYSTEM_LOG . " (class, message_source, identification, data)
                   VALUES ('debug', 'zi_barzahlen', '', '$debug')");
         }
     }
@@ -54,7 +54,7 @@ class barzahlen_log
 
         $error = $error_msg . " # " . serialize($error_data);
 
-        $db->Execute("INSERT INTO " . TABLE_SYSTEM_LOG . " (class, module, identification, data)
+        $db->Execute("INSERT INTO " . TABLE_SYSTEM_LOG . " (class, message_source, identification, data)
                   VALUES ('error', 'zi_barzahlen', '', '$error')");
     }
 }
