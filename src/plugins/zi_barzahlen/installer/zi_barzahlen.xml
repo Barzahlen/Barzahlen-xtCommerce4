@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf8"?>
 <xtcommerceplugin>
   <title>Barzahlen</title>
-  <version>1.1.4</version>
+  <version>1.2.0</version>
   <code>zi_barzahlen</code>
-  <url>http://www.barzahlen.de</url>
+  <url>https://www.barzahlen.de</url>
   <description>Barzahlen Zahlungsmodul</description>
   <icon>barzahlen_logo.png</icon>
+  <developer>Cash Payment Solutions GmbH</developer>
+  <documentation_link><![CDATA[https://integration.barzahlen.de/de/shopsysteme/xt-commerce-4]]></documentation_link>
+  <marketplace_link><![CDATA[http://addons.xt-commerce.com/de/Plugins/Zahlungsweisen/Barzahlen.html]]></marketplace_link>
   <type>payment</type>
 
   <payment>
     <payment_code>zi_barzahlen</payment_code>
     <payment_dir>zi_barzahlen</payment_dir>
-    <payment_icon>barzahlen_logo.png</payment_icon>
+    <payment_icon>../../plugins/zi_barzahlen/images/barzahlen_logo.png</payment_icon>
     <payment_tpl>checkout.html</payment_tpl>
     <de>
       <title>Barzahlen</title>
