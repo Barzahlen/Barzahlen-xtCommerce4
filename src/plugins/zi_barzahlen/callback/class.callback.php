@@ -37,7 +37,6 @@ class callback_zi_barzahlen
 
         if ($ipn->sendResponseHeader($_GET)) {
             $this->_sendHeader(200);
-            $ipn->updateDatabase();
         } else {
             $this->_sendHeader(400);
         }
