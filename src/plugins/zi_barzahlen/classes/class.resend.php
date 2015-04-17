@@ -35,6 +35,7 @@ class barzahlen_resend
     {
         $sandbox = $_GET['sandbox'] == 'true' ? true : false;
         $api = new Barzahlen_Api($_GET['shop_id'], $_GET['payment_key'], $sandbox);
+        $api->setUserAgent('xt:Commerce 4.2 / Plugin v1.2.0');
         $resend = new Barzahlen_Request_Resend($_GET['transaction_id']);
 
         try {

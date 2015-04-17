@@ -23,7 +23,7 @@
 
 require_once _SRV_WEBROOT . 'plugins/zi_barzahlen/classes/class.zi_barzahlen.php';
 require_once _SRV_WEBROOT . 'plugins/zi_barzahlen/classes/class.log.php';
-require_once dirname(__FILE__) . '/api/loader.php';
+require_once dirname(__FILE__) . '/api/version_check.php';
 
 class barzahlen_check
 {
@@ -54,17 +54,18 @@ class barzahlen_check
 
             try {
                 $plugin = new zi_barzahlen;
-                $checker = new Barzahlen_Version_Check(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID);
-                $response = $checker->checkVersion('xt:Commerce 4', PROJEKT_VERSION, $plugin->version);
-                if ($response != false) {
-                    echo '<script type="javascript">
-                          if (confirm("' . sprintf(TEXT_BARZAHLEN_PLUGIN_UPDATE, (string) $response) . '")) {
-                              window.location.href = "http://www.barzahlen.de/partner/integration/shopsysteme/7/xt-commerce-4";
-                          }
-                          </script>';
-                }
+                $checker = new Barzahlen_Version_Check();
+                $newAvailable = $checker->isNewVersionAvailable(ZI_BARZAHLEN_SID, 'xt:Commerce 4', 'xt:Commerce 4.2', $plugin->version);
             } catch (Exception $e) {
                 barzahlen_log::error($e);
+            }
+
+            if($newAvailable) {
+                echo '<script type="javascript">
+                          if (confirm("' . sprintf(TEXT_BARZAHLEN_PLUGIN_UPDATE, (string) $checker->getNewPluginVersion()) . '")) {
+                              window.location.href = "' . $checker->getNewPluginUrl() . '";
+                          }
+                          </script>';
             }
         }
     }
