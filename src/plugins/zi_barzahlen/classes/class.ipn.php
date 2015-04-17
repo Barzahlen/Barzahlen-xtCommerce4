@@ -52,7 +52,11 @@ class barzahlen_ipn
             $this->_addErrorLog($e);
         }
 
-        return $notification->isValid();
+        if ($notification->isValid()) {
+            return $this->updateDatabase();
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -71,7 +75,12 @@ class barzahlen_ipn
         if ($this->_checkOrderInformation() && $this->_canChangeState()) {
             if ($this->_handleStateChange()) {
                 $this->_updateOrderState();
+                return true;
+            } else {
+                return false;
             }
+        } else {
+            return false;
         }
     }
 
@@ -156,17 +165,13 @@ class barzahlen_ipn
     {
         switch ($this->_receivedData['state']) {
             case self::PAYMENTSTATE_PAID:
-                $this->_processTransactionPaid();
-                return true;
+                return $this->_processTransactionPaid();
             case self::PAYMENTSTATE_EXPIRED:
-                $this->_processTransactionExpired();
-                return true;
+                return $this->_processTransactionExpired();
             case self::PAYMENTSTATE_REFUND_COMPLETED:
-                $this->_processRefundCompleted();
-                return true;
+                return $this->_processRefundCompleted();
             case self::PAYMENTSTATE_REFUND_EXPIRED:
-                $this->_processRefundExpired();
-                return true;
+                return $this->_processRefundExpired();
             default:
                 $this->_addErrorLog('controller/ipn: Cannot handle payment state', $this->_receivedData);
                 return false;
@@ -184,6 +189,14 @@ class barzahlen_ipn
         $db->Execute("UPDATE " . TABLE_BARZAHLEN_TRANSACTIONS . "
                       SET zi_state = 'TEXT_BARZAHLEN_PAID'
                       WHERE transaction_id = '" . $this->_receivedData['transaction_id'] . "'");
+
+        $check = $db->Execute("SELECT * FROM " . TABLE_BARZAHLEN_TRANSACTIONS . "
+                               WHERE transaction_id = '" . $this->_receivedData['transaction_id'] . "'
+                               AND zi_state = 'TEXT_BARZAHLEN_PAID'");
+
+        if ($check->RecordCount() == 1) {
+            return true;
+        }
     }
 
     /**
@@ -197,6 +210,14 @@ class barzahlen_ipn
         $db->Execute("UPDATE " . TABLE_BARZAHLEN_TRANSACTIONS . "
                       SET zi_state = 'TEXT_BARZAHLEN_EXPIRED'
                       WHERE transaction_id = '" . $this->_receivedData['transaction_id'] . "'");
+
+        $check = $db->Execute("SELECT * FROM " . TABLE_BARZAHLEN_TRANSACTIONS . "
+                               WHERE transaction_id = '" . $this->_receivedData['transaction_id'] . "'
+                               AND zi_state = 'TEXT_BARZAHLEN_EXPIRED'");
+
+        if ($check->RecordCount() == 1) {
+            return true;
+        }
     }
 
     /**
@@ -227,6 +248,14 @@ class barzahlen_ipn
                         SET zi_state = 'TEXT_BARZAHLEN_REFUND_COMPLETED'
                         WHERE transaction_id = '" . $this->_receivedData['origin_transaction_id'] . "'");
         }
+
+        $check = $db->Execute("SELECT * FROM " . TABLE_BARZAHLEN_REFUNDS . "
+                               WHERE refund_transaction_id = '" . $this->_receivedData['refund_transaction_id'] . "'
+                               AND zi_state = 'TEXT_BARZAHLEN_REFUND_COMPLETED'");
+
+        if ($check->RecordCount() == 1) {
+            return true;
+        }
     }
 
     /**
@@ -246,6 +275,14 @@ class barzahlen_ipn
         $db->Execute("UPDATE " . TABLE_BARZAHLEN_TRANSACTIONS . "
                       SET zi_refund = zi_refund - '" . $this->_receivedData['amount'] . "'
                       WHERE transaction_id = '" . $this->_receivedData['origin_transaction_id'] . "'");
+
+        $check = $db->Execute("SELECT * FROM " . TABLE_BARZAHLEN_REFUNDS . "
+                               WHERE refund_transaction_id = '" . $this->_receivedData['refund_transaction_id'] . "'
+                               AND zi_state = 'TEXT_BARZAHLEN_REFUND_EXPIRED'");
+
+        if ($check->RecordCount() == 1) {
+            return true;
+        }
     }
 
     /**
