@@ -1,12 +1,18 @@
 # Barzahlen Payment Module (xt:Commerce 4)
 
 ## User Manual
-https://integration.barzahlen.de/de/shopsysteme/xt-commerce-4/nutzerhandbuch
+DE - https://integration.barzahlen.de/de/shopsysteme/xt-commerce-4/nutzerhandbuch  
+EN - https://integration.barzahlen.de/en/shopsystems/xt-commerce-4/user-manual
 
 ## Current Version
-1.1.4
+1.2.0
 
 ## Changelog
+
+### 1.2.0 (17.04.2015)
+* updated Barzahlen API PHP SDK (1.1.7)
+* callback returns 200 (OK) only after successful database update
+* improved payment selection
 
 ### 1.1.4 (13.05.2013)
 * updated Barzahlen API PHP SDK
@@ -34,10 +40,10 @@ https://integration.barzahlen.de/de/shopsysteme/xt-commerce-4/nutzerhandbuch
 * initial release
 
 ## Support
-The Barzahlen Team will happily assist you with any problems or questions. Send us an email to support@barzahlen.de or use the contact form at http://www.barzahlen.de/partner/integration.
+The Barzahlen Team will happily assist you with any problems or questions. Send us an email to support@barzahlen.de or use the contact form at https://integration.barzahlen.de/en/support.
 
 ## Copyright
-(c) 2014, Cash Payment Solutions GmbH  
+(c) 2015, Cash Payment Solutions GmbH  
 https://www.barzahlen.de
 
 ## NOTICE OF LICENSE
