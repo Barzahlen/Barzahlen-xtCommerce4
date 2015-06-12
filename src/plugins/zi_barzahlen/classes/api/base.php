@@ -2,7 +2,7 @@
 /**
  * Barzahlen Payment Module SDK
  *
- * @copyright   Copyright (c) 2014 Cash Payment Solutions GmbH (https://www.barzahlen.de)
+ * @copyright   Copyright (c) 2015 Cash Payment Solutions GmbH (https://www.barzahlen.de)
  * @author      Alexander Diebler
  * @license     The MIT License (MIT) - http://opensource.org/licenses/MIT
  */
@@ -11,7 +11,6 @@ abstract class Barzahlen_Base
 {
     const APIDOMAIN = 'https://api.barzahlen.de/v1/transactions/'; //!< call domain (productive use)
     const APIDOMAINSANDBOX = 'https://api-sandbox.barzahlen.de/v1/transactions/'; //!< sandbox call domain
-
     const HASHALGO = 'sha512'; //!< hash algorithm
     const SEPARATOR = ';'; //!< separator character
     const MAXATTEMPTS = 2; //!< maximum of allowed connection attempts
