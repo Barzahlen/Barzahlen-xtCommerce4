@@ -21,7 +21,7 @@ class barzahlen_cancel
     {
         $sandbox = $_GET['sandbox'] == 'true' ? true : false;
         $api = new Barzahlen_Api($_GET['shop_id'], $_GET['payment_key'], $sandbox);
-        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.0');
+        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.1');
         $cancel = new Barzahlen_Request_Cancel($_GET['transaction_id']);
 
         try {

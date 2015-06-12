@@ -15,7 +15,7 @@ class zi_barzahlen
     // payment settings
     public $data = array(); //!< data for payment method
     public $external = false; //!< no external call within the shop
-    public $version = '1.1.4'; //!< version of the payment module
+    public $version = '1.2.1'; //!< version of the payment module
     public $subpayments = false; //!< no subpayments (e.g. credit card) required
     public $iframe = false; //!< no iframe required
     private $_xmlArray; //!< xml response array
@@ -40,7 +40,7 @@ class zi_barzahlen
 
         $sandbox = ZI_BARZAHLEN_SANDBOX == 'true' ? true : false;
         $api = new Barzahlen_Api(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID, $sandbox);
-        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.0');
+        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.1');
         $api->setLanguage($language->environment_language);
 
         $payment = $this->_connectBarzahlen($api, $request);

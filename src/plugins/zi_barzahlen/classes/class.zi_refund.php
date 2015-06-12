@@ -281,7 +281,7 @@ class zi_refund
 
         $sandbox = ZI_BARZAHLEN_SANDBOX == 'true' ? true : false;
         $api = new Barzahlen_Api(ZI_BARZAHLEN_SID, ZI_BARZAHLEN_PID, $sandbox);
-        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.0');
+        $api->setUserAgent('xt:Commerce 4.0-4.1 / Plugin v1.2.1');
         $request = new Barzahlen_Request_Refund($transaction_id, $amount, $result->fields['currency']);
 
         $refund = $this->_connectBarzahlen($api, $request);
